@@ -92,6 +92,23 @@ MRU_DB_NAME=<database_name>
 AWS_REGION=<aws_region>
 ```
 
+Movies can be queried at the application url `/movies`, using the query strings of `title`, `year`. `genre` and `actor`. E.g:
+
+```
+http://app_hostname/movies?title=The%20Incredibles
+http://app_hostname/movies?actor=bob
+http://app_hostname/movies?year=2016
+http://app_hostname/movies?genre=action
+```
+
+Queries can be combined for a more specific search:
+
+```
+http://app_hostname/movies?year=2016&genre=action
+```
+
+Movie JSON can also be posted into `/movies`.
+
 ## Architecture
 
 [![Movies-r-us Architecture](./movies-r-us-architecture.jpg)](./movies-r-us-architecture.jpg)
