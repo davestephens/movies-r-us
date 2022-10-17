@@ -22,9 +22,7 @@ func DownloadFile(notification models.Notification) *os.File {
     defer file.Close()
 
 	// init aws session
-    sess, _ := session.NewSession(&aws.Config{
-        Region: aws.String("eu-west-1")},
-    )
+    sess, _ := session.NewSession(&aws.Config{},)
 
 	// set up s3manager and download
 	downloader := s3manager.NewDownloader(sess)
