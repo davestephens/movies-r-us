@@ -7,7 +7,6 @@ import (
 
 	"github.com/davestephens/movies-r-us/rest-api/database"
 	"github.com/davestephens/movies-r-us/rest-api/models"
-	"github.com/davestephens/movies-r-us/rest-api/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm/clause"
 )
