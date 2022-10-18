@@ -1,8 +1,7 @@
 import json
 import os
 import urllib.parse
-import requests
-import pprint
+from botocore.vendored import requests
 
 print('Loading function')
 
@@ -19,7 +18,7 @@ def lambda_handler(event, context):
         'key':    key
     }
 
-    pprint.pprint(payload)
+    print(payload)
 
     # post it
     url = os.getenv('MRU_API_URL')
