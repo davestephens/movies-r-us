@@ -3,10 +3,10 @@ module "lambda_function" {
 
   function_name = "${var.application_name}-receive-s3-notification"
   description   = "${var.application_name} notification receiver"
-  handler       = "index.lambda_handler"
-  runtime       = "python3.8"
+  handler       = "function.lambda_handler"
+  runtime       = "python3.7"
   publish       = true
-  source_path   = "../lambda/function.py"
+  source_path   = "../../lambda/function.py"
   environment_variables = {
     MRU_API_URL = var.movies_r_us_notify_api_url
   }

@@ -5,7 +5,7 @@ module "security_group" {
 
   name        = var.application_name
   description = "Complete PostgreSQL example security group"
-  vpc_id      = "vpc-045a898be8a796255"
+  vpc_id      = var.vpc_id
 
   # ingress
   ingress_with_cidr_blocks = [
@@ -13,7 +13,7 @@ module "security_group" {
       from_port   = 5432
       to_port     = 5432
       protocol    = "tcp"
-      description = "PostgreSQL access from within VPC"
+      description = "PostgreSQL access from anywhere"
       cidr_blocks = "0.0.0.0/0"
     },
   ]
@@ -45,6 +45,7 @@ module "rds" {
   # user cannot be used as it is a reserved word used by the engine"
   db_name  = replace("${var.application_name}-postgres", "-", "")
   username = replace("${var.application_name}-postgres", "-", "")
+  password = "super_secret999"
   port     = 5432
 
   multi_az               = true
@@ -52,10 +53,6 @@ module "rds" {
 
   # DB subnet group
   create_db_subnet_group = true
-  subnet_ids             = [
-    "subnet-063b4847e097d8ac6", // eu-west-1a
-    "subnet-02e29e23415f5737b", // eu-west-2a
-    "subnet-00ad29ccc309a731d"  // eu-west-3a
-    ]
+  subnet_ids             = var.subnet_ids
 
 }
