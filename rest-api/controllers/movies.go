@@ -2,9 +2,7 @@ package controllers
 
 import (
 	"net/http"
-
 	"fmt"
-
 	"github.com/davestephens/movies-r-us/rest-api/database"
 	"github.com/davestephens/movies-r-us/rest-api/models"
 	"github.com/gin-gonic/gin"
@@ -15,7 +13,6 @@ import (
 // Get all movies
 func GetMovies(c *gin.Context) {
 	var movies []models.Movie
-	//var moviesCount int64
 
 	query := database.DB.Model(&models.Movie{})
 
@@ -40,14 +37,14 @@ func GetMovies(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"data": movies})
+	c.JSON(http.StatusOK, movies)
 }
 
 func MovieByTitle(c *gin.Context) {
 	var movies []models.Movie
 	database.DB.Where("title LIKE ?", c.Param("title")).Find(&movies)
 
-	c.JSON(http.StatusOK, gin.H{"data": movies})
+	c.JSON(http.StatusOK, movies)
 }
 
 func CreateMovie(c *gin.Context) {
@@ -59,8 +56,14 @@ func CreateMovie(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	database.DB.Clauses(clause.OnConflict{
+
+	// try and save or to the db, update if already exists, return error if anything fails
+	if err := database.DB.Clauses(clause.OnConflict{
 		Columns:   []clause.Column{{Name: "title"}},
 		DoUpdates: clause.AssignmentColumns([]string{"year", "genres", "actors"}),
-	  }).Create(&movies)
+	  }).Create(&movies).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, movies)
 }
