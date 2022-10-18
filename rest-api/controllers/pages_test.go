@@ -1,23 +1,27 @@
 package controllers
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"net/http/httptest"
-	"github.com/stretchr/testify"
-	"github.com/davestephens/movies-r-us/rest-api/api"
+	"testing"
+	"github.com/stretchr/testify/assert"
+    "github.com/gin-gonic/gin"
 )
 
 func TestHomepageHandler(t *testing.T) {
-    mockResponse := `{"message":"Welcome to the Tech Company listing API with Golang"}`
-    r := api.SetUpRouter()
-    
-	r.GET("/", Homepage)
-    req, _ := http.NewRequest("GET", "/", nil)
-    w := httptest.NewRecorder()
-    r.ServeHTTP(w, req)
+    expectedResponse := `{"message":"Welcome to movies-r-us"}`
+    router := setupRouter()
+    router.GET("/", Homepage)
 
-    responseData, _ := ioutil.ReadAll(w.Body)
-    assert.Equal(t, mockResponse, string(responseData))
-    assert.Equal(t, http.StatusOK, w.Code)
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/", nil)
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, 200, w.Code)
+	assert.Equal(t, expectedResponse, w.Body.String())
+}
+
+func setupRouter() *gin.Engine{
+    router := gin.Default()
+    return router
 }

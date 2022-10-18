@@ -6,5 +6,5 @@ import (
 )
 
 func Homepage(c *gin.Context) {
-    c.JSON(http.StatusOK, gin.H{"message":"Welcome to movies-r-us"})
+	c.JSON(http.StatusOK, gin.H{"message":"Welcome to movies-r-us"})
 }
