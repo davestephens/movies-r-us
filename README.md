@@ -16,7 +16,9 @@ Movies-r-us is a little setup that takes files from s3, and loads them into a da
 `./lambda` - Lambda function that receives events from s3 object creations, and sends a notification onto the `rest-api` running in k8s.
 `./terraform` - Terraform of RDS, K8s, Lambda function, s3 bucket, s3 bucket event notification config.
 
+
 ## Dependencies
+### Software
 
 - Terraform
 - Helm
@@ -25,12 +27,24 @@ Movies-r-us is a little setup that takes files from s3, and loads them into a da
 - AWS CLI
 - AWS creds configured in `~/.aws/credentials`
 
+### Infra
+
+- k8s
+- RDS
+- s3
+- Lambda
+
 ## Setup
 
-1. Deploy `terraform/eks`
-2. Set up kubectl - `aws eks update-kubeconfig --region eu-west-1 --name movies-r-us-cluster`
-2. Deploy terraform/application
+1. Deploy `infrastructure/1-eks` with eksctl - `eksctl create cluster -f config.yml`
+2. Set up kubectl - `aws eks update-kubeconfig --region eu-west-1 --name movies-r-us-cluster` and check connectivity with `kubectl get svc`
+3. Set up the AWS Load Balancer Controller - https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html
+4. Deploy `infrastructure/2-rds` with terraform, taking care to set `vpc_id` and `subnet_ids` to those created by step 1. Run `terraform output -json` to get database credentials
+5. Update `helm/movies-r-us/values.yaml` with database details and deploy `helm/movies-r-us` - `helm install . --name movies-r-us-rest-api -f values.yaml`
+6. Deploy `infrastructure/3-s3-lambda`, taking care to set `movies_r_us_notify_api_url` to the URL of the `rest-api` application running on k8s.
 
+
+Alternatively, spin up a local Postgres, build the `rest-api` Dockerfile and play locally :)
 
 ## General Info
 
@@ -107,7 +121,7 @@ Queries can be combined for a more specific search:
 http://app_hostname/movies?year=2016&genre=action
 ```
 
-Movie JSON can also be posted into `/movies`.
+Movie JSON can also be posted into `/movies` for testing.
 
 ## Architecture
 
