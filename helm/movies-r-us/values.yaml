@@ -2,13 +2,13 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 1
+replicaCount: 3
 
 image:
-  repository: rest-api
-  pullPolicy: Never
+  repository: davestephens/movies-r-us
+  pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: test
+  tag: 0.1
 
 imagePullSecrets: []
 nameOverride: ""
@@ -41,16 +41,17 @@ service:
   port: 80
 
 ingress:
-  enabled: false
-  className: ""
-  annotations: {}
+  enabled: true
+  className: alb
+  annotations:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
   hosts:
-    - host: chart-example.local
-      paths:
+    - paths:
         - path: /
-          pathType: ImplementationSpecific
+          pathType: Prefix
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
@@ -80,3 +81,10 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+mru:
+  aws_region: eu-west-1
+  database_host: movies-r-us-postgres.aaaaaa.eu-west-1.rds.amazonaws.com
+  database_user: moviesruspostgres
+  database_password: aaaaaaa
+  database_name: moviesruspostgres
