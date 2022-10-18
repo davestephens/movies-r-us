@@ -31,8 +31,6 @@ func ConnectDatabase() error {
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable TimeZone=Europe/London",
 		viper.Get("db_host"), viper.Get("db_user"), viper.Get("db_pass"), viper.Get("db_name"))
 
-		//dsn := "root:Fishcakes448!@tcp(127.0.0.1:3306)/movie4?charset=utf8mb4&parseTime=True&loc=Local"
-
 		database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: newLogger,
 	  })
