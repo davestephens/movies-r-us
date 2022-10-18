@@ -6,12 +6,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Start() {
+func setupRouter() *gin.Engine {
 	r := gin.Default()
-	database.ConnectDatabase()
 	r.GET("/", controllers.Homepage)
 	r.GET("/movies", controllers.GetMovies)
 	r.POST("/movies", controllers.CreateMovie)
 	r.POST("/notify", controllers.PostNotification)
 	r.Run()
+	return r
+}
+
+func Start() {
+	r := setupRouter()
+	database.ConnectDatabase()
+	r.Run(":8080")
 }
