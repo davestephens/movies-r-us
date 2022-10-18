@@ -33,6 +33,17 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: AWS_REGION
+              value: {{ .Values.mru.aws_region }}
+            - name: MRU_DB_HOST
+              value: {{ .Values.mru.database_host }}
+            - name: MRU_DB_USER
+              value: {{ .Values.mru.database_user }}
+            - name: MRU_DB_PASS
+              value: {{ .Values.mru.database_password }}
+            - name: MRU_DB_NAME
+              value: {{ .Values.mru.database_name }}
           ports:
             - name: http
               containerPort: 80
