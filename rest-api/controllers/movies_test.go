@@ -3,17 +3,21 @@ package controllers
 import (
 	"net/http"
 	"net/http/httptest"
-	"testing"
-	"github.com/stretchr/testify/assert"
 	"os"
+	"testing"
 	"github.com/davestephens/movies-r-us/rest-api/database"
+	"github.com/davestephens/movies-r-us/rest-api/utils"
+	"github.com/stretchr/testify/assert"
 )
 
 
 func TestPostGoodMovie(t *testing.T) {
     router := setupRouter()
-	database.ConnectDatabase()
-	router.POST("/movies", CreateMovie)
+	err := database.ConnectDatabase()
+	if err != nil {
+		utils.Logger.Panic("Can't connect to test database :(")
+	}
+	router.POST("/movies", PostMovie)
 
 	// open test data
     json, err := os.Open("../testdata/goodmovie.json")

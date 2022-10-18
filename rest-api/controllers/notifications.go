@@ -5,13 +5,10 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-
-	"github.com/davestephens/movies-r-us/rest-api/database"
 	"github.com/davestephens/movies-r-us/rest-api/models"
 	"github.com/davestephens/movies-r-us/rest-api/s3"
 	"github.com/davestephens/movies-r-us/rest-api/utils"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm/clause"
 )
 
 func PostNotification(c *gin.Context) {
@@ -45,16 +42,10 @@ func PostNotification(c *gin.Context) {
 	s := string(byteValue)
 	utils.Logger.Info("file contents %s", s)
 
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	_, err = CreateMovie(movies); if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
-
-	utils.Logger.Infof("Writing new movies to database", movies)
-	database.DB.Clauses(clause.OnConflict{
-		Columns:   []clause.Column{{Name: "title"}},
-		DoUpdates: clause.AssignmentColumns([]string{"year", "genres", "actors"}),
-	  }).Create(&movies)
 
 	  c.JSON(http.StatusOK, gin.H{"message":"OK"})
 }

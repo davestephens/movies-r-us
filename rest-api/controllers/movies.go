@@ -40,14 +40,9 @@ func GetMovies(c *gin.Context) {
 	c.JSON(http.StatusOK, movies)
 }
 
-func MovieByTitle(c *gin.Context) {
-	var movies []models.Movie
-	database.DB.Where("title LIKE ?", c.Param("title")).Find(&movies)
 
-	c.JSON(http.StatusOK, movies)
-}
-
-func CreateMovie(c *gin.Context) {
+// POST /movies
+func PostMovie(c *gin.Context) {
 	var movies []models.Movie
 
 	// try and bind the input json to a slice of movieinput struct
@@ -57,13 +52,23 @@ func CreateMovie(c *gin.Context) {
 		return
 	}
 
-	// try and save or to the db, update if already exists, return error if anything fails
-	if err := database.DB.Clauses(clause.OnConflict{
-		Columns:   []clause.Column{{Name: "title"}},
-		DoUpdates: clause.AssignmentColumns([]string{"year", "genres", "actors"}),
-	  }).Create(&movies).Error; err != nil {
+	_, err = CreateMovie(movies); if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
+
 	c.JSON(http.StatusOK, movies)
+}
+
+func CreateMovie(movies []models.Movie) (int64, error) {
+	var count int64
+
+	// try and save or to the db, update if already exists, return error if anything fails
+	if err := database.DB.Model(&models.Movie{}).Clauses(clause.OnConflict{
+		Columns:   []clause.Column{{Name: "title"}},
+		DoUpdates: clause.AssignmentColumns([]string{"year", "genres", "actors"}),
+	  }).Count(&count).Create(&movies).Error; err != nil {
+		return count, err
+	}
+	return count, nil
 }

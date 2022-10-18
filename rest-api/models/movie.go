@@ -3,8 +3,6 @@ package models
 import (
 	"gorm.io/gorm"
 )
-
-// the beautiful structured data we want
 type Movie struct {
 	gorm.Model
 	Title  string   `json:"title" binding:"required" gorm:"unique"`

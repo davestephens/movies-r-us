@@ -10,7 +10,7 @@ func setupRouter() *gin.Engine {
 	r := gin.Default()
 	r.GET("/", controllers.Homepage)
 	r.GET("/movies", controllers.GetMovies)
-	r.POST("/movies", controllers.CreateMovie)
+	r.POST("/movies", controllers.PostMovie)
 	r.POST("/notify", controllers.PostNotification)
 	r.Run()
 	return r

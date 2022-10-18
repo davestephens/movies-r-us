@@ -2,12 +2,14 @@ package database
 
 import (
 	"fmt"
+	"log"
+	"os"
+
+	"github.com/davestephens/movies-r-us/rest-api/utils"
 	"github.com/spf13/viper"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-	"log"
-	"os"
 )
 
 var DB *gorm.DB
@@ -36,6 +38,7 @@ func ConnectDatabase() error {
 	  })
 
 	if err != nil {
+		utils.Logger.Panicf("Error connecting to database", err)
 		return err
 	}
 
